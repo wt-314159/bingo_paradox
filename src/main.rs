@@ -19,8 +19,8 @@ fn main() {
 
     let mut count = 0;
     let now = Instant::now();
-    for card in cards {
-        if card.find_match(rand) {
+    for mut card in cards {
+        if card.test_match(rand) {
             count += 1;
         }
     }

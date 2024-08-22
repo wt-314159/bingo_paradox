@@ -31,15 +31,39 @@ impl BingoCard {
         BingoCard { numbers, matches: [[false;5];5] }
     }
 
-    pub fn find_match(&self, number: usize) -> bool {
+    pub fn test_match(&mut self, number: usize) -> bool {
         for i in 0..5 {
             for j in 0..5 {
                 if self.numbers[i][j] == number {
-                    return true;
+                    self.matches[i][j] = true;  
+                    return self.test_bingo();
                 }
             }
         }
         return false;
+    }
+
+    pub fn test_bingo(&self) -> bool {
+        // test rows
+        for i in 0..5 {
+            if self.matches[i].iter().all(|x| *x == true) {
+                return true;
+            }
+        }
+        // test columns
+        for j in 0..5 {
+            let mut val = true;
+            for i in 0..5 {
+                if self.matches[i][j] == false {
+                    val = false;
+                    break;
+                }
+            }
+            if val {
+                return true;
+            }
+        }
+        false
     }
 }
 

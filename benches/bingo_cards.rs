@@ -31,12 +31,21 @@ fn bench_contains_number(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_test_match(c: &mut Criterion) {
+    let mut card = BingoCard::new();
+    for i in (0..=3).step_by(3) {
+        card.test_match(i);
+    }
+
+    c.bench_function("bench_test_match", |b| {
+        b.iter(|| card.test_match(42))
+    });
+}
+
 criterion_group!(
     benches,
-    // bench_new,
-    // bench_new_alternate,
-    // bench_new_cached_ranges,
-    bench_contains_number
+    // bench_contains_number,
+    bench_test_match,
 );
 
 criterion_main!(benches);
