@@ -1,5 +1,8 @@
 use std::fmt;
-use rand::{self, Rng, thread_rng};
+use rand::{
+    self, 
+    Rng, 
+    thread_rng} ;
 use core::ops::RangeInclusive;
 
 const SOURCE_NUMBERS: [[usize;15];5] = [
@@ -34,6 +37,7 @@ impl BingoCard {
             for j in 0..5 {
                 let range_clone = range.clone();
                 numbers[j][i] = rng.gen_range(range_clone);
+
             }
         }
 
@@ -101,4 +105,62 @@ impl fmt::Display for BingoCard {
         }
         Ok(())
     }
+}
+
+pub fn gen_range_no_duplicates(range: RangeInclusive<usize>) -> [usize; 5]
+{
+    let mut values = [0; 5];
+    let mut rng = thread_rng();
+
+    for i in 0..5 {
+        let mut rand = rng.gen_range(range.clone());
+        while values[0..i].contains(&rand) {
+            rand = rng.gen_range(range.clone());
+        }
+        values[i] = rand;
+    }
+
+    values
+}
+
+pub fn gen_range_no_duplicates_alternate(range: RangeInclusive<usize>) -> [usize; 5]
+{
+    let mut values = [0; 5];
+    let mut rng = thread_rng();
+
+    for i in 0..5 {
+        let mut rand = rng.gen_range(range.clone());
+        while values[0..i].contains(&rand) {
+            rand = rng.gen_range(range.clone());
+        }
+        values[i] = rand;
+    }
+
+    values
+}
+
+pub fn contains_number_contains(array: [usize;5], number: usize) -> bool {
+    array.contains(&number)
+}
+
+pub fn contains_number_for(array: [usize;5], number: usize) -> bool {
+    for i in 0..array.len() {
+        if array[i] == number {
+            return true;
+        }
+    }
+    false
+}
+
+pub fn contains_number_foreach(array: [usize;5], number: usize) -> bool {
+    for element in array {
+        if element == number {
+            return true;
+        }
+    }
+    false
+}
+
+pub fn contains_number_iter_any(array: [usize;5], number: usize) -> bool {
+    array.iter().any(|x| x == &number)
 }
