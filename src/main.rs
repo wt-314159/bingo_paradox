@@ -1,36 +1,29 @@
 use std::{fmt, time::Instant};
 use rand::{self, Rng, thread_rng};
 
-const SIZE: usize = 1_000_000;
+const SIZE: usize = 10_000;
 
 fn main() {
-    let mut test = BingoCard::new();
-    let mut rng = thread_rng();
-    let mut randoms: [usize; SIZE] = [0; SIZE];
+    let mut cards: Vec<_> = Vec::with_capacity(SIZE);
 
     let now = Instant::now();
-    for i in 0..SIZE {
-        randoms[i] = rng.gen_range(1..=75);
+    for _ in 0..SIZE {
+        let card = BingoCard::new();
+        cards.push(card);
     }
-    println!("Randoms generated in {:#?}", now.elapsed());
+    println!("{} cards generated in {:#?}", SIZE, now.elapsed());
+
+    let mut rng = thread_rng();
+    let rand = rng.gen_range(1..=75);
 
     let mut count = 0;
     let now = Instant::now();
-    for i in 0..SIZE {
-        if test.contains_number(randoms[i]) {
+    for card in cards {
+        if card.find_match(rand) {
             count += 1;
         }
     }
-    println!("There were {} matches in {:#?}", count, now.elapsed());
-
-    count = 0;
-    let now = Instant::now();
-    for i in 0..SIZE {
-        if test.find_match(randoms[i]) {
-            count += 1;
-        }
-    }
-    println!("There were {} matches in {:#?}", count, now.elapsed());
+    println!("Number {} was found on {} cards in {:#?}", rand, count, now.elapsed());
 }
 
 struct BingoCard {
@@ -47,7 +40,7 @@ impl BingoCard {
             let min = i * 15 + 1;
             let max = (i + 1) * 15;
             let range = min..=max;
-            println!("Generating numbers from {} to {}", min, max);
+            
             for j in 0..5 {
                 let range_clone = range.clone();
                 numbers[j][i] = rng.gen_range(range_clone);
@@ -56,10 +49,6 @@ impl BingoCard {
 
         numbers[2][2] = 0;
         BingoCard { numbers, matches: [[false;5];5] }
-    }
-
-    pub fn contains_number(&self, number: usize) -> bool {
-        self.numbers.iter().any(|x| x.contains(&number))
     }
 
     pub fn find_match(&self, number: usize) -> bool {
