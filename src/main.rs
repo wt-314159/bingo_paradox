@@ -5,29 +5,61 @@ use bingo_paradox::BingoCard;
 const SIZE: usize = 10_000;
 
 fn main() {
-    let mut cards: Vec<_> = Vec::with_capacity(SIZE);
+    run_bingo_with_many_cards()
+}
 
-    let now = Instant::now();
+fn run_bingo_with_many_cards() {
+    let mut cards: Vec<_> = Vec::with_capacity(SIZE);
     for _ in 0..SIZE {
-        let card = BingoCard::new();
-        cards.push(card);
+        cards.push(BingoCard::new());
     }
-    println!("{} cards generated in {:#?}", SIZE, now.elapsed());
 
     let mut rng = thread_rng();
-    let rand = rng.gen_range(1..=75);
+    let mut rand = rng.gen_range(0..=75);
+    let mut count = 1;
+    println!("Number {}!", rand);
 
-    let mut count = 0;
-    let now = Instant::now();
-    for mut card in cards {
-        if card.test_match(rand) {
-            count += 1;
+    while !cards.iter_mut().any(|x| x.test_match(rand)) {
+        rand = rng.gen_range(0..=75);
+        println!("Number {}!", rand);
+        count += 1;
+    }
+
+    println!("Bingo! After {} balls were drawn", count);
+    let winning_card = cards.iter()
+        .find(|x| x.test_bingo())
+        .expect("No winning card found!");
+    println!("Winning bingo card: \n{}", winning_card);
+}
+
+fn test_bingo_works() {
+    let mut test_card = BingoCard::new();
+
+    for i in 0..=75 {
+        if test_card.test_match(i) {
+            break;
         }
     }
-    println!("Number {} was found on {} cards in {:#?}", rand, count, now.elapsed());
+    println!("{}", test_card);
+}
+
+fn test_bingo_works_random() {
+    let mut test_card = BingoCard::new();
+    let mut rng = thread_rng();
+    let mut rand = rng.gen_range(0..=75);
+    let mut count = 1;
+
+    while !test_card.test_match(rand) {
+        rand = rng.gen_range(0..=75);
+        count += 1;
+    }
+    println!("Bingo! After {} balls were drawn", count);
+    println!("{}", test_card);
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+
 }
