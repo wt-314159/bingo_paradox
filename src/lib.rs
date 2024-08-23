@@ -35,6 +35,10 @@ impl BingoCard {
         BingoCard { numbers, matches: [[false;5];5] }
     }
 
+    pub fn reset_card(&mut self) {
+        self.matches = [[false;5];5];
+    }
+
     pub fn test_match(&mut self, number: usize) -> bool {
         for i in 0..5 {
             for j in 0..5 {
